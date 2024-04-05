@@ -19,4 +19,5 @@ urlpatterns = [
     path('edit_meep/<int:pk>',views.edit_meep,name="edit_meep"),
     path('search/',views.search,name="search"),
     path('search_user/',views.search_user,name="search_user"),
+    path('profile/<path:profile_url>/', views.external_profile_redirect, name="external_profile_redirect"),
 ]

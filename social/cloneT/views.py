@@ -171,20 +171,29 @@ def register_user(request):
     
     return render(request,"register.html",{'form':form})
 
+from django.contrib.auth.forms import UserChangeForm
+
 def update_user(request):
     current_user = request.user
-    user_form = SignUpForm(request.POST or None, instance=current_user)
+    user_form = UserChangeForm(request.POST or None, instance=current_user)
     profile_form = ProfilePicForm(request.POST or None, request.FILES or None, instance=current_user.profile)
 
-    if request.method == 'POST' and user_form.is_valid() and profile_form.is_valid():
-        user_form.save()
-        profile_form.save()
+    if request.method == 'POST':
+        if profile_form.is_valid():
+            profile_form.save()
+            messages.success(request, "Your profile has been updated.")
+            return redirect('home')
 
-        update_session_auth_hash(request, current_user)
-        messages.success(request, "Your profile has been updated.")
-        return redirect('home')
+    # Kullanıcı formundan first name, last name, password ve password confirmation alanlarını kaldırma
+    user_form.fields.pop('first_name', None)
+    user_form.fields.pop('last_name', None)
+    user_form.fields.pop('password', None)
+    user_form.fields.pop('password_confirmation', None)
 
-    return render(request, "update_user.html", {"user_form": user_form, "profile_form": profile_form})
+    return render(request, "update_user.html", {"profile_form": profile_form})
+
+
+
     
 
 def meep_like(request,pk):
@@ -268,3 +277,8 @@ def search_user(request):
         return render(request,'search_user.html',{'search':search,'searched':searched})
     else:
         return render(request,'search_user.html',{})
+    
+
+#Connection transfer
+def external_profile_redirect(request, profile_url):
+    return redirect(f"https://{profile_url}")

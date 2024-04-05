@@ -22,7 +22,7 @@
                         {{meep.body}}<br/>
                         <small class="text-muted">
                             {{meep.created_at}}  By 
-                            @{{meep.user.username}}
+                            <a href="{% url 'profile' meep.user.id %}">@{{ meep.user.username }}</a>
                             &nbsp;
                             - {{meep.number_of_likes}} Likes 
                             {% if user in meep.likes.all %}
